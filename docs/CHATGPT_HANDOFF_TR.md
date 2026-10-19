@@ -4,7 +4,8 @@ Aşağıdaki metin başka bir ChatGPT konuşmasına doğrudan aktarılabilir:
 
 ---
 
-`exhibition-walkthrough` adlı bağımsız bir web uygulaması geliştiriyoruz. Amaç,
+`interactive-3d-exhibition-walkthrough` adlı bağımsız bir web uygulaması
+geliştiriyoruz. Amaç,
 tek bir sanatçının eserlerini sergileyecek, tarayıcı tabanlı ve etkileşimli bir
 3D sergi deneyimi oluşturmak. Mekân gerçek bir binanın dijital ikizi değil;
 Sweet Home 3D ile tasarlanmış özgün bir sanal galeri.

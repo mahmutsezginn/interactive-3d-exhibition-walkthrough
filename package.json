@@ -1,7 +1,25 @@
 {
-  "name": "exhibition-walkthrough",
+  "name": "interactive-3d-exhibition-walkthrough",
   "version": "0.1.0",
   "private": true,
+  "description": "Interactive browser-based 3D exhibition with graph-guided camera navigation.",
+  "keywords": [
+    "nextjs",
+    "typescript",
+    "threejs",
+    "react-three-fiber",
+    "webgl",
+    "virtual-gallery"
+  ],
+  "author": "Mahmut Sezgin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahmutsezginn/interactive-3d-exhibition-walkthrough.git"
+  },
+  "homepage": "https://github.com/mahmutsezginn/interactive-3d-exhibition-walkthrough#readme",
+  "bugs": {
+    "url": "https://github.com/mahmutsezginn/interactive-3d-exhibition-walkthrough/issues"
+  },
   "packageManager": "npm@10.9.3",
   "engines": {
     "node": ">=20.9.0"
@@ -12,7 +30,8 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run test && npm run lint && npm run build"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",
