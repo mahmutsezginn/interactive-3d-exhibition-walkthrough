@@ -18,13 +18,13 @@ Sweet Home 3D ile tasarlanmış özgün bir sanal galeri.
   `packageManager: npm@10.9.3` ile sabitlendi. React Three Fiber'ın kullanılmayan
   Expo/React Native optional peer bağımlılıklarında npm 10'un yaşadığı Arborist
   hatasını önlemek için `.npmrc` içinde `legacy-peer-deps=true` kullanılıyor.
-- İlk aşamada WASD, pointer-lock, FPS tipi serbest hareket veya mouse ile 360°
-  free-look olmayacak.
-- Ziyaretçi, önceden tanımlanan kamera düğümleri arasında tıklama/dokunma ile
-  hareket edecek. Grafik dallanacak; kullanıcı tek bir zorunlu rotaya mahkûm
-  olmayacak.
-- Kamera yön değişiklikleri sürekli serbest bakış yerine kontrollü hedefler ve
-  kısa animasyonlarla yapılacak.
+- WASD, pointer-lock veya fizik tabanlı FPS hareketi olmayacak. Ziyaretçi mouse
+  ya da dokunmatik sürükleme ile yatayda 360° bakabilecek; kamera 1,65 m insan
+  göz hizasında düz kalacak.
+- On altı elle tanımlanmış önemli konumun güvenli yolları 2,4 metreden kısa
+  adımlara bölünerek yoğun bir navigasyon ağı üretilecek. Zemin tıklaması gerçek
+  hedef noktayı koruyacak; duvar açıklığı uygunsa doğrudan, değilse güvenli ağ
+  bağlantıları üzerinden ağırlıklı en kısa rota kullanılacak.
 - Navigasyon konfigürasyonu 3D modelden ayrı tutulacak.
 - Galeri geometrisi, navigasyon, sanat eseri verileri ve kullanıcı arayüzü
   birbirinden bağımsız modüller olacak.
@@ -44,8 +44,9 @@ Sweet Home 3D ile tasarlanmış özgün bir sanal galeri.
 - Dış dairesel duvar yaklaşık 13,85 m çapında; iç kavisli bölüm yaklaşık 7,09 m
   çapında.
 - OBJ hafif: 668 vertex ve 1.174 face. Fakat UV veya texture içermiyor.
-- Giriş kapı çerçevesi iki kez üst üste export edilmiş.
-- Zemin, mekân sınırını takip etmeyen büyük bir dikdörtgen.
+- Güncel v2 export'ta tek giriş kapı çerçevesi (`Montant_100`) bulunuyor.
+- Güncel v2 export'ta zemin mekân sınırını takip eden `room_17_*` yüzeyleriyle
+  birlikte geliyor.
 - Üretim öncesinde Blender temizliği ve GLB dönüşümü yapılacak. İlk prototip,
   kamera rotalarını gerçek geometri üzerinde test etmek için OBJ/MTL'yi geçici
   olarak doğrudan yüklüyor.
@@ -72,19 +73,25 @@ merkez, batı, arka ve doğu bakış noktaları bulunuyor.
 ## Güncel uygulama durumu
 
 - Next.js iskeleti, klasör sınırları ve npm kurulumu hazır.
-- Gerçek OBJ/MTL modeli tarayıcıda yükleniyor; kapıdaki ikinci export runtime'da
-  gizleniyor ve model santimetreden metreye çevrilerek giriş dünya merkezine
-  taşınıyor.
-- 16 düğümlü navigasyon grafiği, dallanan ana galeri rotası, kontrollü
-  sol/ileri/sağ bakış, reduced-motion, `Girişe Dön` ve `Sergiden Çık` akışları
-  uygulanmış durumda.
+- Güncel v2 OBJ/MTL modeli tarayıcıda yükleniyor ve model santimetreden metreye
+  çevrilerek giriş dünya merkezine taşınıyor.
+- 16 önemli konumdan üretilen 50 düğümlü navigasyon grafiği, zemine tıklayarak
+  tam seçilen güvenli konuma yürüme, mouse/touch ile göz hizasında 360° yatay
+  bakış, sol/sağ ok tuşları,
+  reduced-motion, `Girişe Dön` ve `Sergiden Çık` akışları uygulanmış durumda.
+- Kamera yürürken tıklama anındaki yönünü koruyor; rota veya hedef kamerayı
+  kendiliğinden çevirmiyor. Erişilemeyen zemin tıklamaları da başka bir düğüme
+  otomatik yönlendirilmek yerine açıklayıcı bir mesajla reddediliyor.
 - TypeScript kontrolü, navigasyon testleri, ESLint ve production build başarılı.
-- Production WebGL önizlemesinde model, giriş koridoru ve navigasyon hotspot'u
-  görünür durumda.
-- Bir sonraki çalışma, kamera düğümlerinin gerçek model içinde tek tek görsel
-  doğrulanması ve gerektiğinde koordinat/waypoint ayarıdır; ardından temiz GLB
-  pipeline'ına geçilecektir.
-
+- WebGL önizlemesinde 22 ulaşılabilir rota konumu güncel v2 geometri içinde
+  yakalanıp görsel olarak doğrulandı. Navigasyon testleri duvar kesişimlerini ve
+  rota boyunca 0,35 m ziyaretçi açıklığını gerçek OBJ üzerinde denetliyor.
+- Gerçek tarayıcı fare olaylarıyla drag sırasında bakış değişimi, drag'ın yanlış
+  yürüme üretmemesi, zemin tıklaması ve önemli konum rotaları doğrulandı.
+- OBJ/MTL değiştiğinde tarayıcıdaki Three.js loader önbelleğinin eski modeli
+  tutmaması için runtime URL'lerinde sürüm anahtarı kullanılıyor.
+- Bir sonraki teknik çalışma temiz GLB pipeline'ıdır; ardından sanat eseri veri
+  ve sunum katmanına geçilebilir.
 Yeni öneriler bu kapsamı korumalı; CMS, veritabanı, üyelik, ödeme, editör,
 multiplayer veya serbest FPS navigasyonu eklenmemeli.
 

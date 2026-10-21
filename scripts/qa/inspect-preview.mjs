@@ -1,9 +1,13 @@
 const devtoolsPort = process.argv[2] ?? "9222";
+const previewPort = process.argv[3] ?? "3000";
+const previewHost = process.argv[4] ?? "localhost";
+const previewUrl = `http://${previewHost}:${previewPort}`;
 const targets = await fetch(`http://127.0.0.1:${devtoolsPort}/json/list`).then(
   (response) => response.json(),
 );
 const target = targets.find(
-  (candidate) => candidate.type === "page" && candidate.url.startsWith("http://127.0.0.1:3000"),
+  (candidate) => candidate.type === "page"
+    && new URL(candidate.url).port === previewPort,
 );
 
 if (!target) {
@@ -40,7 +44,7 @@ socket.addEventListener("open", async () => {
   await call("Runtime.enable");
   await call("Log.enable");
   await call("Page.enable");
-  await call("Page.reload", { ignoreCache: true });
+  await call("Page.navigate", { url: previewUrl });
   await new Promise((resolve) => setTimeout(resolve, 4_000));
 
   const result = await call("Runtime.evaluate", {

@@ -16,7 +16,10 @@ The experience should feel like exploring a place, not clicking through a conven
 ## 2. Confirmed product decisions
 
 1. **Standalone application:** Build this as a new Next.js project, not as a page inside an existing artist portfolio.
-2. **Navigation:** Use a graph of predefined camera positions connected by clickable movement hotspots and simple on-screen controls. Visitors choose their own path through that graph.
+2. **Navigation:** Use a dense graph of validated camera positions. Visitors can
+   look around continuously with mouse/touch drag and click a visible floor area.
+   A safe direct segment reaches the exact point when possible; otherwise the
+   point connects to the graph and follows its shortest safe route.
 3. **First milestone:** Make the 3D space render correctly and make navigation work before implementing elaborate lighting, artwork presentation, or visual polish.
 4. **Architecture is provisional:** The Sweet Home 3D layout is an initial concept. Wall lengths, angles, room dimensions, passages, and the navigation graph may change after testing.
 
@@ -48,19 +51,24 @@ The circular room and the angled central walls are central to the intended spati
 
 The visitor enters the gallery and can independently explore its accessible spaces, inspect wall-mounted artworks, continue toward the circular room, and leave the exhibition at any time.
 
-### Free exploration, but not free-look or FPS movement
+### Free exploration with controlled 360° viewing
 
-**Free exploration means freedom to choose a route, not unrestricted movement in 3D space.**
+**Free exploration combines continuous looking with graph-guided movement; it
+does not mean collision-driven FPS movement.**
 
 For the initial version:
 
 - **No WASD controls.**
-- **No mouse-driven 360-degree free-look, pointer-lock, or first-person-shooter controls.**
 - **No unrestricted character or camera movement.**
-- Visitors navigate between **curated camera nodes** representing believable standing positions in the gallery.
-- At each node, show only destinations that are genuinely reachable from that position.
-- Use clickable hotspots placed near corridors, openings, or other logical destinations; complement them with accessible on-screen forward/back or directional controls where helpful.
-- Allow visitors to change their viewing direction through deliberate on-screen actions (for example, left/right view buttons or selecting a visible wall), using controlled camera transitions rather than continuous mouse-look.
+- Visitors look around horizontally through 360° with mouse/touch drag. The
+  camera stays level at human eye height to preserve comfortable framing.
+- Visitors navigate between a dense set of validated standing positions by
+  clicking walkable floor surfaces or nearby hotspots.
+- Floor clicks retain the selected position. A runtime wall-clearance check
+  permits a direct walk or safely connects the point to the graph; unreachable
+  points are rejected rather than redirected elsewhere.
+- Keep accessible landmark buttons and arrow-key viewing as alternatives to
+  canvas gestures.
 - Clicking a wall or artwork may smoothly orient the camera toward it; clicking an artwork should eventually allow closer inspection.
 - Avoid forcing a single route or a prescribed order of artworks.
 
@@ -71,6 +79,8 @@ The node graph is **not** a simple straight sequence. Connections may branch, an
 - Transitions should be smooth and short, with natural eye-level framing.
 - Camera paths must not pass through walls or visibly clip geometry.
 - Avoid abrupt rotations, confusing reverse directions, and excessive camera motion.
+- Preserve the visitor's current heading while translating along a route; do
+  not automatically rotate the view toward path segments or destinations.
 - A transition can use intermediate waypoints or a short curve even when the UI exposes only two destination nodes.
 - Provide a reduced-motion option or respect the user's `prefers-reduced-motion` setting.
 - Make hotspots discoverable without filling the screen with bright game-like markers.
@@ -88,7 +98,10 @@ Represent each navigation node with, at minimum:
 - Reachable next-node identifiers and optional path waypoints.
 - Optional hotspots or view targets for nearby walls/artworks.
 
-A small hand-authored configuration is sufficient for the MVP. A graph editor, automated pathfinding, or collision-driven free-roam system is **not required** at this stage.
+A small hand-authored landmark graph remains the source of truth. Runtime
+waypoints are generated along its validated paths at short intervals, and
+weighted shortest-path routing connects arbitrary selected nodes. A graph
+editor or collision-driven free-roam system is **not required** at this stage.
 
 **Initial proof of concept:** Start with a few connected nodes across the entrance, central hall, corridor, and circular room. Validate lines of sight and camera paths in the real model before adding more nodes.
 
@@ -158,7 +171,8 @@ The code should make it feasible to use an alternative 3D gallery with the same 
 - Scaffold the standalone Next.js/TypeScript application.
 - Load and render the exhibition model, or a clearly marked temporary geometry proxy if the actual model is unavailable.
 - Establish correct scale, visitor eye height, and basic camera perspective.
-- Implement a small navigation-node graph, clickable reachable destinations, and basic directional/look controls.
+- Implement a dense navigation-node graph, clickable floor destinations, and
+  continuous mouse/touch viewing.
 - Add smooth, collision-free camera transitions along validated paths.
 - Demonstrate movement from the entrance through the central area and corridor to the circular room, with user-directed route choices wherever the layout permits.
 - Provide a clear exit/return action.
@@ -174,7 +188,7 @@ The code should make it feasible to use an alternative 3D gallery with the same 
 
 ### Out of scope for the first milestone
 
-- WASD, pointer-lock, mouse-controlled 360-degree looking, or unrestricted walking.
+- WASD, pointer-lock, physics-driven free walking, or unrestricted camera translation.
 - A strict linear guided tour.
 - Fully automatic navigation graph generation.
 - Photorealistic art-gallery rendering.
@@ -202,7 +216,8 @@ A successful first demo means:
 - The exhibition geometry is visible in a browser at a believable scale.
 - A visitor can start at the entrance and reach the central gallery and circular room.
 - The visitor chooses among available paths where branches exist; there is no forced artwork order.
-- Navigation works through clicks/taps and visible controls, **without WASD or mouse free-look**.
+- Navigation works through floor clicks/taps, accessible landmark controls, and
+  mouse/touch 360° viewing, without requiring WASD or pointer lock.
 - Camera transitions do not visibly intersect walls.
 - The user can turn toward selected areas or walls through controlled actions.
 - The visitor can exit or return to the entrance without manually retracing the full route.

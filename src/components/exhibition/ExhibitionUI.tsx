@@ -1,30 +1,29 @@
 "use client";
 
-import { getNavigationNode } from "@/config/galleries/rounded-room/navigation";
 import type { NavigationNode } from "@/features/navigation/navigation-types";
 
 interface ExhibitionUIProps {
   currentNode: NavigationNode;
   moving: boolean;
+  navigationNotice: string | null;
   reducedMotion: boolean;
-  viewOffset: number;
+  suggestedDestinations: readonly NavigationNode[];
   onNavigate: (nodeId: string) => void;
   onReducedMotionChange: (enabled: boolean) => void;
   onReturnToEntrance: () => void;
   onExit: () => void;
-  onViewChange: (offset: number) => void;
 }
 
 export function ExhibitionUI({
   currentNode,
   moving,
+  navigationNotice,
   reducedMotion,
-  viewOffset,
+  suggestedDestinations,
   onNavigate,
   onReducedMotionChange,
   onReturnToEntrance,
   onExit,
-  onViewChange,
 }: ExhibitionUIProps) {
   return (
     <div className="interface-layer">
@@ -52,55 +51,39 @@ export function ExhibitionUI({
         <span className="location-index">Konum</span>
         <strong>{moving ? "Hareket ediliyor…" : currentNode.label}</strong>
         <span className="location-note">
-          Zemindeki halkayı veya aşağıdaki hedeflerden birini seç.
+          {moving
+            ? "Seçtiğiniz noktaya güvenli rota üzerinden ilerleniyor."
+            : navigationNotice
+              ?? "Etrafa bakmak için yatay sürükleyin; ilerlemek için zemine tıklayın."}
         </span>
       </aside>
 
       <section className="navigation-panel" aria-label="Sergi navigasyonu">
-        <div className="view-controls" aria-label="Bakış yönü">
-          <button
-            aria-pressed={viewOffset === -42}
-            disabled={moving}
-            onClick={() => onViewChange(-42)}
-            type="button"
-          >
-            Sola bak
-          </button>
-          <button
-            aria-pressed={viewOffset === 0}
-            disabled={moving}
-            onClick={() => onViewChange(0)}
-            type="button"
-          >
-            İleri bak
-          </button>
-          <button
-            aria-pressed={viewOffset === 42}
-            disabled={moving}
-            onClick={() => onViewChange(42)}
-            type="button"
-          >
-            Sağa bak
-          </button>
+        <p className="sr-only">
+          Bakış yönünü değiştirmek için sol ve sağ ok tuşlarını kullanabilirsiniz.
+          İlerlemek için aşağıdaki konum düğmelerinden birini seçin.
+        </p>
+        <div className="navigation-hint" aria-hidden="true">
+          <span>Sürükle</span>
+          <strong>360° bak</strong>
+          <span>·</span>
+          <span>Zemine tıkla</span>
+          <strong>ilerle</strong>
         </div>
 
-        <div className="destination-list" aria-label="Ulaşılabilir konumlar">
-          {currentNode.neighbors.map((neighborId) => {
-            const neighbor = getNavigationNode(neighborId);
-
-            return (
-              <button
-                className="destination-button"
-                disabled={moving}
-                key={neighbor.id}
-                onClick={() => onNavigate(neighbor.id)}
-                type="button"
-              >
-                <span>{neighbor.shortLabel}</span>
-                <span aria-hidden="true">↗</span>
-              </button>
-            );
-          })}
+        <div className="destination-list" aria-label="Yakındaki önemli konumlar">
+          {suggestedDestinations.map((destination) => (
+            <button
+              className="destination-button"
+              disabled={moving}
+              key={destination.id}
+              onClick={() => onNavigate(destination.id)}
+              type="button"
+            >
+              <span>{destination.shortLabel}</span>
+              <span aria-hidden="true">↗</span>
+            </button>
+          ))}
         </div>
 
         <label className="motion-toggle">

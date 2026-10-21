@@ -2,16 +2,20 @@
 
 import { Canvas } from "@react-three/fiber";
 
-import type { NavigationNode } from "@/features/navigation/navigation-types";
+import type {
+  FloorNavigationTarget,
+  NavigationNode,
+} from "@/features/navigation/navigation-types";
 import { GalleryScene } from "./GalleryScene";
 
 interface ExhibitionCanvasProps {
   currentNode: NavigationNode;
-  targetNode: NavigationNode | null;
+  route: readonly NavigationNode[];
   reducedMotion: boolean;
   resetKey: number;
-  viewOffset: number;
   onArrive: () => void;
+  onFloorNavigate: (target: FloorNavigationTarget) => void;
+  onModelError: (error: Error) => void;
   onNavigate: (nodeId: string) => void;
 }
 
@@ -25,10 +29,17 @@ export function ExhibitionCanvas(props: ExhibitionCanvasProps) {
         position: [0, 1.65, 0.65],
       }}
       dpr={[1, 1.6]}
+      className={props.route.length > 0 ? "is-moving" : undefined}
       gl={{
         antialias: true,
         powerPreference: "high-performance",
       }}
+      fallback={(
+        <div className="canvas-error" role="alert">
+          Bu tarayıcı WebGL sahnesini başlatamadı.
+        </div>
+      )}
+      style={{ touchAction: "none" }}
     >
       <GalleryScene {...props} />
     </Canvas>

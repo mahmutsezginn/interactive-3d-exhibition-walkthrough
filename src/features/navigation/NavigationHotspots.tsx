@@ -10,16 +10,18 @@ import type { NavigationNode } from "./navigation-types";
 interface NavigationHotspotsProps {
   currentNode: NavigationNode;
   disabled: boolean;
+  reducedMotion: boolean;
   onNavigate: (nodeId: string) => void;
 }
 
 interface HotspotProps {
   node: NavigationNode;
   disabled: boolean;
+  reducedMotion: boolean;
   onNavigate: (nodeId: string) => void;
 }
 
-function Hotspot({ node, disabled, onNavigate }: HotspotProps) {
+function Hotspot({ node, disabled, reducedMotion, onNavigate }: HotspotProps) {
   const group = useRef<Group>(null);
 
   useFrame(({ clock }) => {
@@ -27,7 +29,7 @@ function Hotspot({ node, disabled, onNavigate }: HotspotProps) {
       return;
     }
 
-    const pulse = 1 + Math.sin(clock.elapsedTime * 2.2) * 0.08;
+    const pulse = reducedMotion ? 1 : 1 + Math.sin(clock.elapsedTime * 2.2) * 0.08;
     group.current.scale.setScalar(pulse);
   });
 
@@ -73,6 +75,7 @@ function Hotspot({ node, disabled, onNavigate }: HotspotProps) {
 export function NavigationHotspots({
   currentNode,
   disabled,
+  reducedMotion,
   onNavigate,
 }: NavigationHotspotsProps) {
   return currentNode.neighbors.map((neighborId) => (
@@ -81,6 +84,7 @@ export function NavigationHotspots({
       key={neighborId}
       node={getNavigationNode(neighborId)}
       onNavigate={onNavigate}
+      reducedMotion={reducedMotion}
     />
   ));
 }

@@ -9,12 +9,17 @@ first-person controls.
 
 The first milestone validates the imported gallery geometry, real-world scale,
 camera placement, and navigation routes. The application currently loads the
-original OBJ/MTL export and provides a 16-node, branching walkthrough from the
-entrance to the circular final room.
+v2 OBJ/MTL export and provides 16 authored landmarks expanded into a 50-node,
+branching walking graph from the entrance to the circular final room. Landmark
+routes have been captured against the current geometry, and every graph edge is
+checked for wall intersections and 0.35 m visitor clearance.
 
 ## Highlights
 
 - Branching, configuration-driven camera navigation
+- Eye-level mouse/touch 360° viewing and left/right arrow-key controls
+- Exact walkable-floor targets with wall-clearance checks and safe routing
+- Heading-preserving camera travel to avoid forced turns
 - Clickable 3D hotspots and accessible on-screen controls
 - Camera transitions with reduced-motion support
 - Return-to-entrance and leave-exhibition flows
@@ -71,7 +76,7 @@ by this browser application.
 
 ## Roadmap
 
-- Visually validate and fine-tune every camera route against the gallery model
 - Clean the source geometry and convert the runtime asset to GLB
 - Add the exhibition's artwork data and presentation layer
 - Develop the final noir lighting and material direction
+- Re-run the visual route capture whenever the gallery geometry changes

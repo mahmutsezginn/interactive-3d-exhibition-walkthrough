@@ -2,28 +2,34 @@
 
 import { Suspense } from "react";
 
-import type { NavigationNode } from "@/features/navigation/navigation-types";
+import type {
+  FloorNavigationTarget,
+  NavigationNode,
+} from "@/features/navigation/navigation-types";
 import { CameraController } from "@/features/navigation/CameraController";
 import { NavigationHotspots } from "@/features/navigation/NavigationHotspots";
 import { GalleryModel } from "./GalleryModel";
+import { GalleryModelErrorBoundary } from "./GalleryModelErrorBoundary";
 
 interface GallerySceneProps {
   currentNode: NavigationNode;
-  targetNode: NavigationNode | null;
+  route: readonly NavigationNode[];
   reducedMotion: boolean;
   resetKey: number;
-  viewOffset: number;
   onArrive: () => void;
+  onFloorNavigate: (target: FloorNavigationTarget) => void;
+  onModelError: (error: Error) => void;
   onNavigate: (nodeId: string) => void;
 }
 
 export function GalleryScene({
   currentNode,
-  targetNode,
+  route,
   reducedMotion,
   resetKey,
-  viewOffset,
   onArrive,
+  onFloorNavigate,
+  onModelError,
   onNavigate,
 }: GallerySceneProps) {
   return (
@@ -35,14 +41,20 @@ export function GalleryScene({
       <directionalLight intensity={1.4} position={[8, 16, 5]} />
       <directionalLight intensity={0.55} position={[24, 8, -34]} />
 
-      <Suspense fallback={null}>
-        <GalleryModel />
-      </Suspense>
+      <GalleryModelErrorBoundary onError={onModelError}>
+        <Suspense fallback={null}>
+          <GalleryModel
+            currentNode={currentNode}
+            onFloorNavigate={onFloorNavigate}
+          />
+        </Suspense>
+      </GalleryModelErrorBoundary>
 
       <NavigationHotspots
         currentNode={currentNode}
-        disabled={Boolean(targetNode)}
+        disabled={route.length > 0}
         onNavigate={onNavigate}
+        reducedMotion={reducedMotion}
       />
 
       <CameraController
@@ -50,8 +62,7 @@ export function GalleryScene({
         onArrive={onArrive}
         reducedMotion={reducedMotion}
         resetKey={resetKey}
-        targetNode={targetNode}
-        viewOffset={viewOffset}
+        route={route}
       />
     </>
   );
